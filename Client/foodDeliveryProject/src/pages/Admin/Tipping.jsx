@@ -1,9 +1,12 @@
 import axios from 'axios';
 import React, { useContext } from 'react';
 import { AuthContext } from '../../Helpers/AuthContext';
+import { Alert, Snackbar } from '@mui/material';
 
 function Tipping() {
-    const { url } = useContext(AuthContext);
+    const { url, error, setError,
+        errorMessage, setErrorMessage,
+        errorType, setErrorType } = useContext(AuthContext);
 
     const addTip = (e) => {
         e.preventDefault();
@@ -21,15 +24,41 @@ function Tipping() {
             },
         }).then((response) => {
             if (!response.data.error) {
-                console.log(response.data);
+                setError(true)
+                setErrorType("success")
+                setErrorMessage(response.data);
             } else {
                 console.log(response.data.error);
             }
         });
     };
 
+    const handleClose = () => {
+        setError(false);
+        setErrorMessage(null);
+        setErrorType(null)
+    };
+
     return (
         <div className='min-h-screen flex justify-center items-center p-4'>
+            {error && (
+                    <Snackbar
+                        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+                        open={error}
+                        autoHideDuration={2000}
+                        onClose={handleClose}
+                        key={"top" + "center"}
+                    >
+                        <Alert
+                            onClose={handleClose}
+                            severity={errorType}
+                            variant="filled"
+                            sx={{ width: '100%' }}
+                        >
+                            {errorMessage}
+                        </Alert>
+                    </Snackbar>
+                )}
             <div className='w-full max-w-lg bg-white rounded-2xl shadow-md'>
                 <p className='bg-indigo-950 text-white px-3 py-4 text-xl rounded-r-full rounded-tl-2xl w-[40%]'>
                     Add Tips

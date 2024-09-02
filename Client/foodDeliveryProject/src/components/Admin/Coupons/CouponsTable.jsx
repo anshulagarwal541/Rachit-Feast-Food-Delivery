@@ -13,7 +13,9 @@ function CouponsTable() {
     const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
-    const { url, coupons, setCoupons, transformAndSetCoupon } = useContext(AuthContext);
+    const { url, coupons, setCoupons, transformAndSetCoupon, error, setError,
+        errorMessage, setErrorMessage,
+        errorType, setErrorType } = useContext(AuthContext);
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -78,6 +80,9 @@ function CouponsTable() {
         }).then((response) => {
             if (!response.data.error) {
                 transformAndSetCoupon(response.data);
+                setError(true)
+                setErrorType("info")
+                setErrorMessage("Coupon Status updated..!!")
                 navigate('/admin/coupons');
             } else {
                 console.log(response.data.error);

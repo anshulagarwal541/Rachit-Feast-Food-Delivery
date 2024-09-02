@@ -4,9 +4,13 @@ import { Outlet } from 'react-router-dom'
 import { AuthContext } from '../../../Helpers/AuthContext'
 
 function RestaurantMainLayout() {
-    const { url } = useContext(AuthContext);
+    const { url, error, setError,
+        errorMessage, setErrorMessage,
+        errorType, setErrorType } = useContext(AuthContext);
     return (
-        <AuthContext.Provider value={{ url }}>
+        <AuthContext.Provider value={{ url, error, setError,
+            errorMessage, setErrorMessage,
+            errorType, setErrorType }}>
             <RestaurantDashboard>
                 <Outlet />
             </RestaurantDashboard>

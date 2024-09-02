@@ -1,4 +1,4 @@
-import { Checkbox, FormControlLabel } from '@mui/material'
+import { Alert, Checkbox, FormControlLabel, Snackbar } from '@mui/material'
 import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react'
 import { FormGroup } from 'react-bootstrap'
@@ -6,7 +6,9 @@ import { AuthContext } from '../../../Helpers/AuthContext';
 import { useParams } from 'react-router-dom';
 
 function RestaurantCoupons() {
-    const { url } = useContext(AuthContext)
+    const { url, error, setError,
+        errorMessage, setErrorMessage,
+        errorType, setErrorType } = useContext(AuthContext)
     const { id } = useParams();
     const [coupons, setCoupons] = useState(null)
     const [restaurant, setRestaurant] = useState(null)
@@ -69,16 +71,44 @@ function RestaurantCoupons() {
             }
         }).then((response) => {
             if (!response.data.error) {
-                console.log(response.data)
+                setError(true)
+                setErrorType("success")
+                setErrorMessage(response.data)
             }
             else {
-                console.log(response.data.error);
+                setError(true)
+                setErrorType("error")
+                setErrorMessage(response.data.error);
             }
         })
     }
 
+    const handleClose = () => {
+        setError(false);
+        setErrorMessage(null);
+        setErrorType(null)
+    };
+
     return (
         <div className='bg-indigo-50 h-[100vh] flex justify-center items-center'>
+            {error && (
+                    <Snackbar
+                        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+                        open={error}
+                        autoHideDuration={2000}
+                        onClose={handleClose}
+                        key={"top" + "center"}
+                    >
+                        <Alert
+                            onClose={handleClose}
+                            severity={errorType}
+                            variant="filled"
+                            sx={{ width: '100%' }}
+                        >
+                            {errorMessage}
+                        </Alert>
+                    </Snackbar>
+                )}
             <div className='bg-white rounded-2xl p-5 h-fit'>
                 <p className='text-indigo-950 font-bold text-3xl text-center'>Update the Coupons</p>
                 {(coupons && restaurant && coupons.length>0) ?

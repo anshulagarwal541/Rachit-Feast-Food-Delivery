@@ -84,7 +84,7 @@ function RestaurantDashboard() {
                     <Snackbar
                         anchorOrigin={{ vertical: "top", horizontal: "center" }}
                         open={error}
-                        autoHideDuration={6000}
+                        autoHideDuration={2000}
                         onClose={handleClose}
                         key={"top" + "center"}
                     >

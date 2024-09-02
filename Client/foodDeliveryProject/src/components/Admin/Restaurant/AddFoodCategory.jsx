@@ -6,9 +6,12 @@ import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { AuthContext } from '../../../Helpers/AuthContext';
 import axios from 'axios';
+import { Alert, Snackbar } from '@mui/material';
 
 function AddFoodCategory() {
-    const { restaurant, setRestaurant, id, url } = useContext(AuthContext);
+    const { restaurant, setRestaurant, id, url, error, setError,
+        errorMessage, setErrorMessage,
+        errorType, setErrorType } = useContext(AuthContext);
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
     const [categories, setCategories] = useState([]);
@@ -99,14 +102,41 @@ function AddFoodCategory() {
         }).then((response) => {
             if (!response.data.error) {
                 transformAndSetCategory(response.data.categories);
+                setError(true)
+                setErrorType("success")
+                setErrorMessage("Successfully added category..!!")
             } else {
                 console.log(response.data.error);
             }
         });
     };
 
+    const handleClose2 = () => {
+        setError(false);
+        setErrorMessage(null);
+        setErrorType(null)
+    };
+
     return (
         <div className='h-auto flex justify-center items-center flex-col gap-5 p-4'>
+            {error && (
+                    <Snackbar
+                        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+                        open={error}
+                        autoHideDuration={2000}
+                        onClose={handleClose}
+                        key={"top" + "center"}
+                    >
+                        <Alert
+                            onClose={handleClose2}
+                            severity={errorType}
+                            variant="filled"
+                            sx={{ width: '100%' }}
+                        >
+                            {errorMessage}
+                        </Alert>
+                    </Snackbar>
+                )}
             <div className='w-full max-w-xl bg-white rounded-2xl shadow-md'>
                 <p className='bg-indigo-950 text-white px-3 py-2 w-[60%] text-2xl font-bold rounded-tl-full rounded-r-full'>
                     Add Category

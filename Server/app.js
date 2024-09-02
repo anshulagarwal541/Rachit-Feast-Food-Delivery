@@ -138,13 +138,24 @@ app.post("/admin/restaurant/:id/updateDetails", adminValidateToken, async (req, 
     try {
         const { id } = req.params;
         const data = req.body;
-        let restaurant = await Restaurant.findByIdAndUpdate(id, data);
+        if(data.username=="" || data.password=="" || !data.password || !data.username)
+        {
+            return res.json({error: "Username or password is incorrect..!!"})
+        }
+        const admin=await Admin.findById(req.admin._id);
+        if(data.password!=admin.memberPin.toString() || data.username!=admin.memberId)
+        {
+            return res.json({error: "Username or password is incorrect..!!"});
+        }
+        const d=data.r;
+        let restaurant = await Restaurant.findByIdAndUpdate(id, d);
         await restaurant.save();
         res.json(restaurant)
     }
     catch (e) {
         res.json({ error: e.message })
     }
+    
 })
 app.post("/admin/restaurant/:id/addCategory", adminValidateToken, async (req, res) => {
     try {

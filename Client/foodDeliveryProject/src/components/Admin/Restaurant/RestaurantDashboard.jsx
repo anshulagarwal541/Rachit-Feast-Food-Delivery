@@ -6,7 +6,9 @@ import axios from 'axios';
 import RestaurantHeader from './RestaurantHeader.jsx';
 
 function RestaurantDashboard({ children }) {
-  const { url } = useContext(AuthContext);
+  const { url, error, setError,
+    errorMessage, setErrorMessage,
+    errorType, setErrorType } = useContext(AuthContext);
   const [restaurant, setRestaurant] = useState(null);
   const { id } = useParams();
   useEffect(() => {
@@ -47,7 +49,9 @@ function RestaurantDashboard({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ id, restaurant, setRestaurant, reloadPage, url }}>
+    <AuthContext.Provider value={{ id, restaurant, setRestaurant, reloadPage, url, error, setError,
+      errorMessage, setErrorMessage,
+      errorType, setErrorType }}>
       <div className='flex'>
         <div className='hidden lg:block md:w-[17%] h-[100vh] bg-indigo-950'>
           <RestaurantSideBar />

@@ -1,9 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../../Helpers/AuthContext';
 import axios from 'axios';
+import { Alert, Snackbar } from '@mui/material';
 
 function RestaurantProfile() {
-    const { restaurant, setRestaurant, url } = useContext(AuthContext);
+    const { restaurant, setRestaurant, url, error, setError,
+        errorMessage, setErrorMessage,
+        errorType, setErrorType } = useContext(AuthContext);
     const [r, setR] = useState(null);
 
     useEffect(() => {
@@ -12,17 +15,29 @@ function RestaurantProfile() {
 
     const handleUpdate = (e) => {
         e.preventDefault();
-        axios.post(`${url}/admin/restaurant/${restaurant._id}/updateDetails`, r, {
+        const formData = new FormData(e.target);
+        const data = {
+            username: formData.get("username"),
+            password: formData.get("password"),
+            r: r
+        }
+        axios.post(`${url}/admin/restaurant/${restaurant._id}/updateDetails`, data, {
             headers: {
                 adminAccessToken: localStorage.getItem("adminAccessToken")
             }
         }).then((response) => {
             if (!response.data.error) {
                 setRestaurant(response.data);
+                setError(true)
+                setErrorMessage("Successfully updated details..!!")
+                setErrorType("success")
             } else {
-                console.log(response.data.error);
+                setError(true)
+                setErrorType("error")
+                setErrorMessage(response.data.error);
             }
         });
+        e.target.reset();
     };
 
     const handleChange = (e) => {
@@ -33,8 +48,32 @@ function RestaurantProfile() {
         }));
     };
 
+    const handleClose = () => {
+        setError(false);
+        setErrorMessage(null);
+        setErrorType(null)
+    };
+
     return (
         <div className='h-full w-full flex justify-center items-center p-4'>
+            {error && (
+                <Snackbar
+                    anchorOrigin={{ vertical: "top", horizontal: "center" }}
+                    open={error}
+                    autoHideDuration={2000}
+                    onClose={handleClose}
+                    key={"top" + "center"}
+                >
+                    <Alert
+                        onClose={handleClose}
+                        severity={errorType}
+                        variant="filled"
+                        sx={{ width: '100%' }}
+                    >
+                        {errorMessage}
+                    </Alert>
+                </Snackbar>
+            )}
             <div className='w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl'>
                 <p className='rounded-tl-full rounded-r-full bg-indigo-950 text-white px-3 py-2 text-xl w-[60%]'>
                     Update Details
@@ -51,6 +90,7 @@ function RestaurantProfile() {
                             <div className='flex flex-col gap-2 w-full md:w-[45%] p-2'>
                                 <label htmlFor="password" className='font-bold'>Password</label>
                                 <input type="password" id="password" placeholder='password'
+                                    name="password"
                                     className='px-4 py-2 rounded-full shadow-black shadow-md w-full' />
                             </div>
                         </div>

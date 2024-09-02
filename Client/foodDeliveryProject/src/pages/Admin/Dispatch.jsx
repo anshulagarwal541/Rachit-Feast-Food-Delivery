@@ -1,12 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { useNavigate } from 'react-router-dom';
-import { Box, Button, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { Alert, Box, Button, FormControl, InputLabel, MenuItem, Select, Snackbar } from '@mui/material';
 import axios from 'axios';
 import { AuthContext } from '../../Helpers/AuthContext';
 
 function Dispatch() {
-    const { url } = useContext(AuthContext);
+    const { url, error, setError,
+        errorMessage, setErrorMessage,
+        errorType, setErrorType } = useContext(AuthContext);
     const navigate = useNavigate();
     const [riders, setRiders] = useState(null);
     const [orders, setOrders] = useState([]);
@@ -138,6 +140,9 @@ function Dispatch() {
         }).then((response) => {
             if (!response.data.error) {
                 transformAndSetOrder(response.data);
+                setError(true)
+                setErrorType("success")
+                setErrorMessage("Success updated the rider..!!")
             } else {
                 console.log(response.data.error);
             }
@@ -158,8 +163,32 @@ function Dispatch() {
         setOrders(transformedOrder);
     };
 
+    const handleClose = () => {
+        setError(false);
+        setErrorMessage(null);
+        setErrorType(null)
+    };
+
     return (
         <div className='flex justify-center items-center min-h-screen p-4'>
+            {error && (
+                    <Snackbar
+                        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+                        open={error}
+                        autoHideDuration={2000}
+                        onClose={handleClose}
+                        key={"top" + "center"}
+                    >
+                        <Alert
+                            onClose={handleClose}
+                            severity={errorType}
+                            variant="filled"
+                            sx={{ width: '100%' }}
+                        >
+                            {errorMessage}
+                        </Alert>
+                    </Snackbar>
+                )}
             <div
                 className='bg-white rounded-2xl shadow-md w-full max-w-5xl flex items-center p-10'
                 style={{ height: 'auto', width: '100%' }}

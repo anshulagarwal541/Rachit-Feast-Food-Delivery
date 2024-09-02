@@ -4,7 +4,9 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 function AddCoupons() {
-    const { url, setCoupons, transformAndSetCoupon } = useContext(AuthContext);
+    const { url, setCoupons, transformAndSetCoupon, error, setError,
+        errorMessage, setErrorMessage,
+        errorType, setErrorType } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleRider = (e) => {
@@ -21,9 +23,14 @@ function AddCoupons() {
         }).then((response) => {
             if (!response.data.error) {
                 transformAndSetCoupon(response.data);
+                setError(true)
+                setErrorType("success")
+                setErrorMessage("Successfully added a new coupon .. :)")
                 navigate("/admin/coupons");
             } else {
-                console.log(response.data.error);
+                setError(true)
+                setErrorType("error")
+                setErrorMessage(response.data.error);
             }
         });
         e.target.reset();

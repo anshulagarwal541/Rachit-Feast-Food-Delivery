@@ -1,152 +1,6 @@
-// import React, { useContext, useEffect, useState } from 'react'
-// import { DataGrid } from '@mui/x-data-grid';
-// import Switch from '@mui/material/Switch';
-// import { TimeInput } from "@nextui-org/react";
-// import { Time } from "@internationalized/date";
-// import { Button } from '@mui/material';
-// import { AuthContext } from '../../../Helpers/AuthContext';
-// import axios from 'axios';
-// import dayjs from 'dayjs';
-// import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-// import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-// import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-// import { useParams } from 'react-router-dom';
-
-// function RestaurantTiming() {
-//     const [value, setValue] = useState(dayjs('2022-04-17T15:30'));
-//     const { url } = useContext(AuthContext);
-//     const [restaurant, setRestaurant] = useState(null);
-//     const [timing, setTiming] = useState([]);
-//     const { id } = useParams();
-
-//     const columns = [
-//         { field: 'day', headerName: 'DAYS', width: 130 },
-//         {
-//             field: 'name',
-//             headerName: 'Timing',
-//             width: 600,
-//             renderCell: (params) => (
-//                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-//                     <DemoContainer components={['TimePicker', 'TimePicker']}>
-//                         <TimePicker
-//                             onChange={(e) => handleOpenTiming(e, params.row.id)}
-//                             label="Open Timing"
-//                             defaultValue={dayjs('2022-04-17T15:30')}
-//                         />
-//                         <TimePicker
-//                             onChange={(e) => handleCloseTiming(e, params.row.id)}
-//                             label="Close Timing"
-//                             value={value}
-//                         />
-//                     </DemoContainer>
-//                 </LocalizationProvider>
-//             )
-//         },
-//         {
-//             field: 'action',
-//             headerName: 'Status',
-//             width: 330,
-//             renderCell: (params) => (
-//                 <div className='flex items-center h-full'>
-//                     <Button
-
-//                         variant="contained"
-//                         color="primary"
-//                         onClick={(e) => handleButtonClick(e, params)}
-//                         sx={{
-//                             border: "50%",
-//                             backgroundColor: "indigo",
-//                             height: "fit",
-//                             width: "10rem",
-//                             borderRadius: "20px",
-//                             fontWeight: "bold",
-//                             paddingY: "5px",
-//                             fontSize: "0.7rem"
-//                         }}
-//                     >
-//                         {params.row.action}
-//                     </Button>
-//                 </div>
-//             ),
-//         },
-//     ];
-
-//     useEffect(() => {
-//         const data = {
-//             _id: id
-//         }
-//         axios.post(`${url}/admin/getRestaurant`, data).then((response) => {
-//             if (response.data.error) {
-//                 console.log(response.data.error);
-//             }
-//             else {
-//                 transformAndSetTiming(response.data.timing)
-//             }
-//         })
-//     }, [])
-
-//     const transformAndSetTiming = (timings) => {
-//         const transformedTiming = timings.map((res) => ({
-//             id: res.day,
-//             day: res.day,
-//             from: res.openTime,
-//             to: res.closeTime,
-//             action: res.isClosed ? "closed" : "open"
-//         }));
-//         setTiming(transformedTiming);
-//     }
-
-//     const handleOpenTiming = (e, rowId) => {
-//         console.log(e.$H, rowId)
-//         const data = {
-//             restaurantId: id,
-//             timings: timing
-//         }
-//         console.log(data)
-//         // axios.post(`${url}/admin/restaurant/timingupdate`, data).then((response) => {
-//         //     if (!response.data.error) {
-
-//         //     }
-//         //     else {
-//         //         console.log(response.data.error);
-//         //     }
-//         // })
-//     }
-
-//     const handleCloseTiming = (e, rowId) => {
-//         console.log(e, rowId)
-//     }
-
-//     return (
-//         <div className='h-full flex justify-center items-center'>
-//             <div className='bg-white rounded-b-2xl border-none w-[90%] px-10'>
-//                 <DataGrid
-//                     rows={timing}
-//                     columns={columns}
-//                     rowHeight={80}
-//                     initialState={{
-//                         pagination: {
-//                             paginationModel: { page: 0, pageSize: 8 },
-//                         },
-//                     }}
-//                     pageSizeOption={7}
-//                     checkboxSelection={false}
-//                     sx={{
-//                         border: "none",
-//                     }}
-//                 />
-//             </div>
-//         </div>
-//     )
-// }
-
-// export default RestaurantTiming
-
-
 import React, { useContext, useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Button } from '@mui/material';
+import { Alert, Button, Snackbar } from '@mui/material';
 import { AuthContext } from '../../../Helpers/AuthContext';
 import axios from 'axios';
 import dayjs from 'dayjs';
@@ -156,7 +10,9 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { useParams } from 'react-router-dom';
 
 function RestaurantTiming() {
-    const { url } = useContext(AuthContext);
+    const { url, error, setError,
+        errorMessage, setErrorMessage,
+        errorType, setErrorType } = useContext(AuthContext);
     const [restaurant, setRestaurant] = useState(null);
     const [timing, setTiming] = useState([]);
     const { id } = useParams();
@@ -276,7 +132,9 @@ function RestaurantTiming() {
             }
         }).then((response) => {
             if (!response.data.error) {
-                console.log(response.data)
+                setError(true)
+                setErrorType("success")
+                setErrorMessage("Updated the timing..!!")
                 transformAndSetTiming(response.data)
             }
             else {
@@ -296,16 +154,45 @@ function RestaurantTiming() {
             }
         }).then((response) => {
             if (!response.data.error) {
+                setError(true)
+                setErrorType("success")
+                setErrorMessage("Updated the timing..!!")
                 transformAndSetTiming(response.data)
             }
             else {
-                console.log(response.data.error);
+                setError(true)
+                setErrorType("error")
+                setErrorMessage(response.data.error)
             }
         })
     };
 
+    const handleClose = () => {
+        setError(false);
+        setErrorMessage(null);
+        setErrorType(null)
+    };
+
     return (
         <div className='h-full flex justify-center items-center'>
+            {error && (
+                    <Snackbar
+                        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+                        open={error}
+                        autoHideDuration={2000}
+                        onClose={handleClose}
+                        key={"top" + "center"}
+                    >
+                        <Alert
+                            onClose={handleClose}
+                            severity={errorType}
+                            variant="filled"
+                            sx={{ width: '100%' }}
+                        >
+                            {errorMessage}
+                        </Alert>
+                    </Snackbar>
+                )}
             <div className='bg-white rounded-b-2xl border-none w-[90%] px-10'>
                 <DataGrid
                     rows={timing}

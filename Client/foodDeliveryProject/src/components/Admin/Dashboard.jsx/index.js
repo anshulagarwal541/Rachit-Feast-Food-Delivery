@@ -59,11 +59,6 @@ export const management = [
     },
     {
         icon: NotificationsIcon,
-        name: "Notification",
-        to:"/admin"
-    },
-    {
-        icon: NotificationsIcon,
         name: "Comission Rates",
         to:"/admin/comissionRates"
     },
