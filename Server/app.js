@@ -49,8 +49,147 @@ app.get("/", async (req, res) => {
 
 
 // ........................................Routes for admins......................................
+<<<<<<< HEAD
 app.use("/admin", adminRoutes)
 
+=======
+app.get("/admin", adminValidateToken, async (req, res) => {
+    try {
+        const admin = await Admin.findById(req.admin._id);
+        res.json(admin)
+    }
+    catch (e) {
+        res.json({ error: e.message })
+    }
+})
+app.get("/admin/allRestaurants", adminValidateToken, async (req, res) => {
+    try {
+        const allRestaurants = await Restaurant.find().populate({
+            path: "vendor"
+        });
+        res.json(allRestaurants);
+    } catch (e) {
+        res.json({ error: e.message });
+    }
+})
+app.post('/admin/getRestaurant', adminValidateToken, async (req, res) => {
+    try {
+        const data = req.body;
+        const restaurant = await Restaurant.findById(data._id).populate({
+            path: "orders",
+            populate: [
+                { path: "user" },
+                { path: "restaurant" },
+                { path: "rider" },
+                { path: "riderRating" },
+                { path: "restaurantRating" }
+            ]
+        }).populate({
+            path: "ratings",
+            populate: [
+                { path: "user" }
+            ]
+        });
+        res.json(restaurant);
+    }
+    catch (e) {
+        res.json({ error: e.message })
+    }
+})
+app.post("/admin/restaurant/:id/updateDetails", adminValidateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = req.body;
+        if(data.username=="" || data.password=="" || !data.password || !data.username)
+        {
+            return res.json({error: "Username or password is incorrect..!!"})
+        }
+        const admin=await Admin.findById(req.admin._id);
+        if(data.password!=admin.memberPin.toString() || data.username!=admin.memberId)
+        {
+            return res.json({error: "Username or password is incorrect..!!"});
+        }
+        const d=data.r;
+        let restaurant = await Restaurant.findByIdAndUpdate(id, d);
+        await restaurant.save();
+        res.json(restaurant)
+    }
+    catch (e) {
+        res.json({ error: e.message })
+    }
+    
+})
+app.post("/admin/restaurant/:id/addCategory", adminValidateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = req.body;
+        let restaurant = await Restaurant.findById(id);
+        if (restaurant.categories.length == 0) {
+            restaurant.categories = data;
+        }
+        else {
+            restaurant.categories.push(data);
+        }
+        await restaurant.save();
+        res.json(restaurant)
+    }
+    catch (e) {
+        res.json({ error: e.message })
+    }
+})
+app.post("/admin/restaurant/:id/addFood", adminValidateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const data = req.body;
+        const restaurant = await Restaurant.findById(id);
+        if (restaurant.foods.length == 0) {
+            restaurant.foods = data;
+        }
+        else {
+            restaurant.foods.push(data);
+        }
+        await restaurant.save();
+        res.json(restaurant)
+    }
+    catch (e) {
+        res.json({ error: e.message });
+    }
+})
+app.post("/admin/restaurant/updateComissionRate", adminValidateToken, async (req, res) => {
+    try {
+        const data = req.body;
+        const restaurant = await Restaurant.findById(data.id);
+        restaurant.comissionRate = data.rate;
+        await restaurant.save();
+        const allRestaurants = await Restaurant.find()
+        res.json(allRestaurants)
+    }
+    catch (e) {
+        res.json({ error: e.message })
+    }
+})
+app.post('/admin/vendor/post', adminValidateToken, async (req, res) => {
+    try {
+        const data = req.body;
+        const newVendor = new Vendor(data);
+        await newVendor.save();
+        const allVendors = await Vendor.find();
+        res.json(allVendors);
+    }
+    catch (e) {
+        res.json({ error: e.message });
+    }
+})
+app.get('/admin/vendor', adminValidateToken, async (req, res) => {
+    try {
+        const allVendors = await Vendor.find();
+        res.json(allVendors);
+    }
+    catch (e) {
+        res.json({ error: e.message });
+    }
+})
+>>>>>>> aed49d9 (withdraw and modulation in nodejs is left)
 app.get('/vendor/:id/getRestaurant', adminValidateToken, async (req, res) => {
     try {
         const { id } = req.params;
