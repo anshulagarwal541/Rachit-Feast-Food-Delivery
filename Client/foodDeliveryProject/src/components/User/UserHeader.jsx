@@ -21,7 +21,8 @@ import axios from 'axios';
 
 function UserHeader() {
     const navigate = useNavigate();
-    const { vendor, setVendor, admin, setAdmin, rider, setRider, url } = useContext(AuthContext);
+    const { vendor, setVendor, admin, setAdmin, rider, setRider, url, setErrorType, setError,
+        errorMessage } = useContext(AuthContext);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [state, setState] = useState(false);
     const [user, setUser] = useState(null);
@@ -43,7 +44,6 @@ function UserHeader() {
                 setUser(response.data);
             }
             else {
-                console.log(response.data.error);
             }
         })
     }, [])
@@ -78,7 +78,7 @@ function UserHeader() {
             // }}
             >
                 {['Orders', 'Wishlist', 'Account', 'Current Order'].map((text, index) => (
-                    <Link key={index} to={text === "Orders" ? (user ? `/user/${user._id}/orders` : "/") : (text === "Wishlist" ? (user ? `/user/${user._id}/wishlist` : "/") : (text === "Account" ? (user ? `/user/account` : "/") :(text === "Current Order" ? (user ? `/user/order/complete/track` : "/") : "/")))}>
+                    <Link key={index} to={text === "Orders" ? (user ? `/user/${user._id}/orders` : "/") : (text === "Wishlist" ? (user ? `/user/${user._id}/wishlist` : "/") : (text === "Account" ? (user ? `/user/account` : "/") : (text === "Current Order" ? (user ? `/user/order/complete/track` : "/") : "/")))}>
                         <ListItem disablePadding
                             sx={{
                                 display: "flex",

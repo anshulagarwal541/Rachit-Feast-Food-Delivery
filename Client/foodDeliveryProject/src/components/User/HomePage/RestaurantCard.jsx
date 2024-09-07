@@ -9,7 +9,10 @@ import axios from 'axios';
 dayjs.extend(isBetween); // Extend dayjs with the isBetween plugin
 
 function RestaurantCard({ restaurant }) {
-    const { url, setAllRestaurants } = useContext(AuthContext)
+    const { url, setAllRestaurants,
+        error, setError,
+        errorMessage, setErrorMessage,
+        errorType, setErrorType } = useContext(AuthContext)
     const [isOpen, setIsOpen] = useState(false);
     const [user, setUser] = useState(null)
 
@@ -38,9 +41,6 @@ function RestaurantCard({ restaurant }) {
         }).then((response) => {
             if (!response.data.error) {
                 setUser(response.data)
-            }
-            else {
-                console.log(response.data.error)
             }
         })
 

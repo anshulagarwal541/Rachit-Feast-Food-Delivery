@@ -24,7 +24,9 @@ function createCircle(center, radiusInKm, points = 64) {
 }
 
 function RiderCurrentOrder() {
-  const { url } = useContext(AuthContext);
+  const { url, error, setError,
+    errorMessage, setErrorMessage,
+    errorType, setErrorType } = useContext(AuthContext);
   const [restaurant, setRestaurant] = useState(null);
   const [viewPort, setViewPort] = useState({
     latitude: 28.7041,
@@ -167,7 +169,10 @@ function RiderCurrentOrder() {
                   url,
                   bill, setBill,
                   restaurant, setRestaurant,
-                  order
+                  order,
+                  error, setError,
+                  errorMessage, setErrorMessage,
+                  errorType, setErrorType
                 }}>
                   <RiderBillList />
                   <RiderBillInfo />

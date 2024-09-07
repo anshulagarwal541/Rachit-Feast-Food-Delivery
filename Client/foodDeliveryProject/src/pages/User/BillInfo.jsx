@@ -76,7 +76,9 @@ function BillInfo() {
         setErrorType("success")
         navigate("/user/order/complete/track")
       } else {
-        console.log(response.data.error)
+        setError(true)
+        setErrorType("warning")
+        setErrorMessage(response.data.error)
         navigate(`/`)
       }
     })

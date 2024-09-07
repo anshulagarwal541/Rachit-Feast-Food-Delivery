@@ -45,6 +45,10 @@ const riderSchema = new mongoose.Schema({
     wallet: {
         type: Number,
         default: 0
+    },
+    withdrawRequest: {
+        type: Boolean,
+        default: false
     }
 })
 const Rider = mongoose.model("Rider", riderSchema)

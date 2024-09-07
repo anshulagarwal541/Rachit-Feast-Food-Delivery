@@ -5,19 +5,14 @@ import axios from 'axios';
 import { AuthContext } from '../../../Helpers/AuthContext';
 
 function RiderHomeComponent() {
-    const { url } = useContext(AuthContext);
+    const { url, error, setError,
+        errorMessage, setErrorMessage,
+        errorType, setErrorType } = useContext(AuthContext);
     const [rider, setRider] = useState(null);
-    const uData = [4000, 3000, 2000, 2780, 1890, 2390, 3490];
-    const pData = [2400, 1398, 9800, 3908, 4800, 3800, 4300];
-    const xLabels = [
-        'Page A',
-        'Page B',
-        'Page C',
-        'Page D',
-        'Page E',
-        'Page F',
-        'Page G',
-    ];
+    const [ratingData, setRatingData] = useState([]);
+    const [moneyData, setMoneyData] = useState([]);
+    const [totalItems, setTotalItems] = useState([])
+    const [xLabels, setXLabels] = useState([]);
 
     useEffect(() => {
         axios.get(`${url}/rider`, {
@@ -27,11 +22,41 @@ function RiderHomeComponent() {
         }).then((response) => {
             if (!response.data.error) {
                 setRider(response.data);
+                // Assuming the rider's data contains an array of orders with ratings and amount.
+                const orders = response.data.orders;
+                const ratings = orders.map(order => order.riderRating.rating);
+                const moneyReceived = orders.map(order => order.tip); // Assuming 'amount' represents the money.
+                const labels = orders.map((_, index) => `Order ${index + 1}`); // Creating labels based on order number.
+                const items = orders.map(order => order.items.length);
+                setTotalItems(items);
+                setRatingData(ratings);
+                setMoneyData(moneyReceived);
+                setXLabels(labels);
             } else {
                 console.log(response.data.error);
             }
         });
     }, [url]);
+
+    const handleWithDraw = () => {
+        axios.get(`${url}/rider/wallet/withdraw`, {
+            headers: {
+                riderAccessToken: localStorage.getItem('riderAccessToken')
+            }
+        }).then((response) => {
+            if (!response.data.error) {
+                setError(true)
+                setErrorType("success")
+                setErrorMessage("Successfully put the withdraw request. Wait for the admin to accept it.!!")
+                setRider(response.data)
+            }
+            else {
+                setError(true)
+                setErrorType("warning")
+                setErrorMessage(response.data.error);
+            }
+        })
+    }
 
     return (
         <div className='bg-indigo-950'>
@@ -70,16 +95,20 @@ function RiderHomeComponent() {
                 </div>
                 <div className='bg-indigo-50 border-4 border-yellow-400 w-full md:w-[20rem] p-5 rounded-2xl flex flex-col justify-center items-center gap-5'>
                     <p className='font-bold text-lg md:text-2xl'>Feast Wallet</p>
-                    <p className='font-extrabold text-2xl md:text-3xl'>Rs {rider && rider.wallet}</p>
+                    <div className='flex gap-5 justify-center items-center'>
+                        <p className='font-extrabold text-2xl md:text-3xl'>Rs {rider && rider.wallet}</p>
+                        <button onClick={handleWithDraw} className='w-fit h-fit bg-indigo-950 text-white rounded px-5 py-2'>Withdraw</button>
+                    </div>
                 </div>
             </div>
             <div className='w-full flex justify-center items-center p-5 md:p-10'>
-                <div className='bg-indigo-50 w-full md:w-fit h-fit rounded-2xl p-5 text-indigo-950'>
+                <div className='bg-indigo-50 w-full md:w-[45rem] h-fit rounded-2xl p-5 text-indigo-950'>
                     <LineChart
                         height={300}
                         series={[
-                            { data: pData, label: 'pv' },
-                            { data: uData, label: 'uv' },
+                            { data: ratingData, label: 'Rating' },
+                            { data: moneyData, label: 'Tip' },
+                            { data: totalItems, label: 'Items Delivered' },
                         ]}
                         xAxis={[{ scaleType: 'point', data: xLabels }]}
                         grid={{ vertical: true, horizontal: true }}

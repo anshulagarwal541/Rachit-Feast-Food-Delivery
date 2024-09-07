@@ -88,6 +88,7 @@ function RestaurantHeader() {
                         }}
                     >
                         {isMobileOrTablet && <RestaurantDeviceHeader />}
+                        
                         <MenuItem onClick={handleLogout}>Logout</MenuItem>
                     </Menu>
 

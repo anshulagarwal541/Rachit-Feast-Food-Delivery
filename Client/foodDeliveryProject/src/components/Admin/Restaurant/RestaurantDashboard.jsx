@@ -56,7 +56,7 @@ function RestaurantDashboard({ children }) {
         <div className='hidden lg:block md:w-[17%] h-[100vh] bg-indigo-950'>
           <RestaurantSideBar />
         </div>
-        <div className='w-full lg:w-[83%] min-h-lvh bg-indigo-50 overflow-y-scroll'>
+        <div className='w-full lg:w-[83%] min-h-[100vh] bg-indigo-50 overflow-y-scroll'>
           <RestaurantHeader />
           {children}
         </div>

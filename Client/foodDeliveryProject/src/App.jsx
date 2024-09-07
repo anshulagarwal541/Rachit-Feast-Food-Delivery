@@ -43,6 +43,7 @@ import RestaurantCoupons from "./components/Admin/Restaurant/RestaurantCoupons"
 import UserCurrentOrder from "./components/User/CurrentOrder/UserCurrentOrder"
 
 function App() {
+  //import.meta.env.VITE_URL
   const url = import.meta.env.VITE_URL
   const [vendor, setVendor] = useState(null)
   const [admin, setAdmin] = useState(null)
@@ -85,7 +86,6 @@ function App() {
       }}>
         <Router>
           <Routes>
-
             {/* Route for public home page */}
             <Route path="/" element={<RachitFeast />} />
             <Route path="/home/restaurant/:id" element={<RestaurantDashboard />} />

@@ -8,8 +8,9 @@ function RestaurantDeviceHeader() {
     const { handleGeneralClick, handleManagementClick } = useContext(AuthContext);
     return (
         <>
-            <MenuItem onClick={handleGeneralClick}>Home</MenuItem>
-            <MenuItem onClick={handleManagementClick}>Management</MenuItem>
+            <MenuItem onClick={handleGeneralClick}>🔽 Home</MenuItem>
+            <MenuItem onClick={handleManagementClick}>🔽 Management</MenuItem>
+            <MenuItem ><Link to="/admin">Back to Admin</Link></MenuItem>
         </>
     )
 }
