@@ -49,10 +49,9 @@ app.get("/", async (req, res) => {
 
 
 // ........................................Routes for admins......................................
-<<<<<<< HEAD
+
 app.use("/admin", adminRoutes)
 
-=======
 app.get("/admin", adminValidateToken, async (req, res) => {
     try {
         const admin = await Admin.findById(req.admin._id);
@@ -189,7 +188,6 @@ app.get('/admin/vendor', adminValidateToken, async (req, res) => {
         res.json({ error: e.message });
     }
 })
->>>>>>> aed49d9 (withdraw and modulation in nodejs is left)
 app.get('/vendor/:id/getRestaurant', adminValidateToken, async (req, res) => {
     try {
         const { id } = req.params;
